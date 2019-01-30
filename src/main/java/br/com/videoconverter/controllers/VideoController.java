@@ -19,6 +19,8 @@ public class VideoController {
 	public ModelAndView converter(MultipartFile fileToConvert) {
 		String amazonPathToFileToConvert;
 		
+		amazonPathToFileToConvert = fileSaver.write(fileToConvert);
+		
 		ModelAndView videoToView = new ModelAndView("redirect:resultado");		
 		
 		return videoToView;

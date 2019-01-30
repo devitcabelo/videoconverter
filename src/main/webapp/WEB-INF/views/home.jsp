@@ -15,7 +15,7 @@
 		commandName="video" enctype="multipart/form-data">
 		<div class="form-group">
 			<label>Video:</label>
-			<input name="urlOrigin" type="file" class="form-control" accept=".dv">
+			<input name="fileToConvert" type="file" class="form-control" accept=".dv">
 			<button type="submit" class="btn btn-primary">Converter para MP4</button>		
 		</div>
 	</form:form>
