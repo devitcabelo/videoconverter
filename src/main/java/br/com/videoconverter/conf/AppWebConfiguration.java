@@ -12,16 +12,16 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 @EnableWebMvc
 @ComponentScan(basePackages = "br.com.videoconverter")
 public class AppWebConfiguration extends WebMvcConfigurerAdapter {
-	
+
 	@Bean
 	public InternalResourceViewResolver internalResourceViewResolver() {
 		InternalResourceViewResolver resolver = new InternalResourceViewResolver();
 		resolver.setSuffix(".jsp");
 		resolver.setPrefix("WEB-INF/views/");
-		
+
 		return resolver;
 	}
-	
+
 	@Bean
 	public MultipartResolver multipartResolver() {
 		return new StandardServletMultipartResolver();

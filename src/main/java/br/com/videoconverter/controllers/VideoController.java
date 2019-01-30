@@ -31,85 +31,83 @@ public class VideoController {
 	FileSaver fileSaver;
 
 	private static final String ZENCODER_API_KEY = System.getenv("ZENCODER_API_KEY");
-	
-	@RequestMapping(value="/converter", method= RequestMethod.POST, name="converter")
-	public ModelAndView converter(MultipartFile fileToConvert, 
-			RedirectAttributes redirectAttributes) {
+
+	@RequestMapping(value = "/converter", method = RequestMethod.POST, name = "converter")
+	public ModelAndView converter(MultipartFile fileToConvert, RedirectAttributes redirectAttributes) {
 		String amazonPathToFileToConvert, state;
 		String[] idAndPath = new String[2];
-		
+
 		amazonPathToFileToConvert = fileSaver.write(fileToConvert);
 		idAndPath = requestEncodeJob(amazonPathToFileToConvert);
 		state = waitEncodeJobDone(idAndPath[0]);
-		
+
 		redirectAttributes.addFlashAttribute("resultUrl", idAndPath[1]);
-		return new ModelAndView("redirect:result");		
+		return new ModelAndView("redirect:result");
 	}
-	
+
 	@RequestMapping("result")
 	public ModelAndView result() {
 		return new ModelAndView("home");
 	}
-	
+
 	public String[] requestEncodeJob(String pathToFileToEncode) {
 		JsonObject requestParams = new JsonObject();
 		JsonObject responseJson;
 		String pathToEncodedFile = "", jobId = "";
 		String[] returnIdAndPath = new String[2];
-		
+
 		requestParams.addProperty("test", true);
 		requestParams.addProperty("input", pathToFileToEncode);
-		
+
 		try {
 			URL obj = new URL("https://app.zencoder.com/api/v2/jobs");
-		    
-		    HttpURLConnection postConnection = (HttpURLConnection) obj.openConnection();
+
+			HttpURLConnection postConnection = (HttpURLConnection) obj.openConnection();
 			postConnection.setRequestMethod("POST");
 
-		    postConnection.setRequestProperty("Zencoder-Api-Key", ZENCODER_API_KEY);
-		    postConnection.setRequestProperty("Content-Type", "application/json");
+			postConnection.setRequestProperty("Zencoder-Api-Key", ZENCODER_API_KEY);
+			postConnection.setRequestProperty("Content-Type", "application/json");
 
-		    postConnection.setDoOutput(true);
-		    OutputStream os = postConnection.getOutputStream();
-		    os.write(requestParams.toString().getBytes());
-		    os.flush();
-		    os.close();
+			postConnection.setDoOutput(true);
+			OutputStream os = postConnection.getOutputStream();
+			os.write(requestParams.toString().getBytes());
+			os.flush();
+			os.close();
 
-		    responseJson = getResponseFromConection(postConnection);
-		    pathToEncodedFile = responseJson.get("outputs").getAsJsonArray().get(0)
-		    		.getAsJsonObject().get("url").getAsString();
-	        jobId = responseJson.get("id").getAsString();
+			responseJson = getResponseFromConection(postConnection);
+			pathToEncodedFile = responseJson.get("outputs").getAsJsonArray().get(0).getAsJsonObject().get("url")
+					.getAsString();
+			jobId = responseJson.get("id").getAsString();
 
-		    
 		} catch (ProtocolException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		returnIdAndPath[0] = jobId;
 		returnIdAndPath[1] = pathToEncodedFile;
 		return returnIdAndPath;
 
 	}
-	
+
 	public String waitEncodeJobDone(String jobId) {
 		JsonObject responseJson;
 		String state = "";
-		
+
 		do {
-        	try {
+			try {
 				TimeUnit.SECONDS.sleep(3);
 				URL urlJobId = new URL("https://app.zencoder.com/api/v2/jobs/" + jobId + "/progress");
-	    	    
-	        	HttpURLConnection getConnection = (HttpURLConnection) urlJobId.openConnection();
-	        	getConnection.setRequestMethod("GET");
-	        	getConnection.setRequestProperty("Zencoder-Api-Key", ZENCODER_API_KEY);
 
-	        	responseJson = getResponseFromConection(getConnection );
-	        	state = responseJson.get("state").getAsString();
-	        	
+				HttpURLConnection getConnection = (HttpURLConnection) urlJobId.openConnection();
+				getConnection.setRequestMethod("GET");
+				getConnection.setRequestProperty("Zencoder-Api-Key", ZENCODER_API_KEY);
+
+				responseJson = getResponseFromConection(getConnection);
+				state = responseJson.get("state").getAsString();
+
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -123,37 +121,37 @@ public class VideoController {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-        	
-        }while(!state.equals("finished") && !state.equals("failed"));
+
+		} while (!state.equals("finished") && !state.equals("failed"));
 		return state;
 	}
-	
+
 	public JsonObject getResponseFromConection(HttpURLConnection postConnection) {
 		InputStreamReader inputStreamReader;
-		
+
 		String inputLine;
-        StringBuffer response = new StringBuffer();
-        JsonParser jsonParser = new JsonParser();
-        
-        BufferedReader in;
-        
+		StringBuffer response = new StringBuffer();
+		JsonParser jsonParser = new JsonParser();
+
+		BufferedReader in;
+
 		try {
-			inputStreamReader = new InputStreamReader(
-			        postConnection.getInputStream());
+			inputStreamReader = new InputStreamReader(postConnection.getInputStream());
 			in = new BufferedReader(inputStreamReader);
 
 			while ((inputLine = in.readLine()) != null) {
-	            response.append(inputLine);
-	        } in.close();
-	        
+				response.append(inputLine);
+			}
+			in.close();
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-        JsonObject objectFromString = jsonParser.parse(response.toString()).getAsJsonObject();
-        
+		JsonObject objectFromString = jsonParser.parse(response.toString()).getAsJsonObject();
+
 		return objectFromString;
 	}
-	
+
 }

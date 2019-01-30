@@ -15,15 +15,15 @@ public class FileSaver {
 
 	@Autowired
 	private AmazonS3 amazonS3;
-	private static final String BUCKET=System.getenv("BUCKET");
-	
+	private static final String BUCKET = System.getenv("BUCKET");
+
 	public String write(MultipartFile file) {
 		try {
 			amazonS3.putObject(new PutObjectRequest(BUCKET, file.getOriginalFilename(), file.getInputStream(), null)
 					.withCannedAcl(CannedAccessControlList.PublicRead));
 
-	        return "s3://" + BUCKET + "/"+file.getOriginalFilename();
-	        
+			return "s3://" + BUCKET + "/" + file.getOriginalFilename();
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -9,7 +9,7 @@ public class ServletSpringMVC extends AbstractAnnotationConfigDispatcherServletI
 
 	@Override
 	protected Class<?>[] getRootConfigClasses() {
-		return new Class[]{AppWebConfiguration.class};
+		return new Class[] { AppWebConfiguration.class };
 	}
 
 	@Override
@@ -23,7 +23,7 @@ public class ServletSpringMVC extends AbstractAnnotationConfigDispatcherServletI
 		// TODO Auto-generated method stub
 		return new String[] { "/" };
 	}
-	
+
 	@Override
 	protected void customizeRegistration(Dynamic registration) {
 		// TODO Auto-generated method stub

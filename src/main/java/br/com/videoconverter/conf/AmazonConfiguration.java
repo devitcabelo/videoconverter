@@ -10,14 +10,15 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 
 @Configuration
 public class AmazonConfiguration {
-	
+
 	@Bean
 	public BasicAWSCredentials basicAWSCredentials() {
 		return new BasicAWSCredentials(System.getenv("AWS_ACCESS_KEY_ID"), System.getenv("AWS_SECRET_KEY"));
 	}
-	
+
 	@Bean
 	public AmazonS3 amazonS3() {
-		return AmazonS3ClientBuilder.standard().withRegion(System.getenv("AWS_DEFAULT_REGION")).withCredentials(new AWSStaticCredentialsProvider(basicAWSCredentials())).build();
+		return AmazonS3ClientBuilder.standard().withRegion(System.getenv("AWS_DEFAULT_REGION"))
+				.withCredentials(new AWSStaticCredentialsProvider(basicAWSCredentials())).build();
 	}
 }
