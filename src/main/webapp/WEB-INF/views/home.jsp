@@ -9,7 +9,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>Video Converter</title>
 </head>
 <body>
 	<h1>Converta seus vídeos em formato .dv para MP4</h1>
