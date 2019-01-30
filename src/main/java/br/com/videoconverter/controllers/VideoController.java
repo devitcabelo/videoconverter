@@ -30,6 +30,8 @@ public class VideoController {
 	@Autowired
 	FileSaver fileSaver;
 
+	private static final String ZENCODER_API_KEY = System.getenv("ZENCODER_API_KEY");
+	
 	@RequestMapping(value="/converter", method= RequestMethod.POST, name="converter")
 	public ModelAndView converter(MultipartFile fileToConvert, 
 			RedirectAttributes redirectAttributes) {
@@ -64,7 +66,7 @@ public class VideoController {
 		    HttpURLConnection postConnection = (HttpURLConnection) obj.openConnection();
 			postConnection.setRequestMethod("POST");
 
-		    postConnection.setRequestProperty("Zencoder-Api-Key", "24c328a62abd7db549b531273d07d7dc");
+		    postConnection.setRequestProperty("Zencoder-Api-Key", ZENCODER_API_KEY);
 		    postConnection.setRequestProperty("Content-Type", "application/json");
 
 		    postConnection.setDoOutput(true);
@@ -103,7 +105,7 @@ public class VideoController {
 	    	    
 	        	HttpURLConnection getConnection = (HttpURLConnection) urlJobId.openConnection();
 	        	getConnection.setRequestMethod("GET");
-	        	getConnection.setRequestProperty("Zencoder-Api-Key", "24c328a62abd7db549b531273d07d7dc");
+	        	getConnection.setRequestProperty("Zencoder-Api-Key", ZENCODER_API_KEY);
 
 	        	responseJson = getResponseFromConection(getConnection );
 	        	state = responseJson.get("state").getAsString();

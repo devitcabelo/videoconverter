@@ -15,7 +15,7 @@ public class FileSaver {
 
 	@Autowired
 	private AmazonS3 amazonS3;
-	private static final String BUCKET="gupy-sambatech-videoconverter";
+	private static final String BUCKET=System.getenv("BUCKET");
 	
 	public String write(MultipartFile file) {
 		try {
